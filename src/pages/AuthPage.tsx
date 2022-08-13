@@ -1,7 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { AuthComponent } from '../components/auth/AuthComponent'
+import { RegistrationComponent } from '../components/auth/RegistrationComponent'
 
 export const AuthPage = () => {
+    const [isAuth, ChangeIsAuth] = useState<boolean>(false)
+
   return (
-    <div>AuthPage</div>
+    <div>
+        {isAuth ? 
+        <AuthComponent isAuth={isAuth} ChangeIsAuth={ChangeIsAuth}/>
+        :
+        <RegistrationComponent />
+        }
+    </div>
   )
 }
