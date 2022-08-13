@@ -1,4 +1,5 @@
 # Getting Started with Create React App
+Version Node.js - 16.13.1
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
