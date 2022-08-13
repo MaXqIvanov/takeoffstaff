@@ -23,7 +23,7 @@ function App() {
     <>
     {!loading ? 
       <>
-        {/* {userAuth ? <Header></Header> : <></> } */}
+        {auth ? <Header></Header> : <></> }
         <div className={'wrapper'}>
         <Routes>
            { auth ? 

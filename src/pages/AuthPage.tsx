@@ -3,7 +3,7 @@ import { AuthComponent } from '../components/auth/AuthComponent'
 import { RegistrationComponent } from '../components/auth/RegistrationComponent'
 
 export const AuthPage = () => {
-    const [isAuth, ChangeIsAuth] = useState<boolean>(false)
+    const [isAuth, ChangeIsAuth] = useState<boolean>(true)
 
   return (
     <div>

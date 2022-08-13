@@ -1,5 +1,28 @@
 .auth{
-    background: red;
     height: 100%;
     width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.auth_wrapper{
+    width: 300px;
+    height: 280px;
+    background: rgb(0, 76, 88);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    position: relative;
+    form{
+        height: fit-content;
+    }
+}
+.change_window{
+    position: absolute;
+    bottom: 8px;
+    right: 15px;
+    color: white;
+    cursor: pointer;
 }
