@@ -10,8 +10,6 @@ interface CommonHeaderProperties extends HeadersDefaults {
 export const getProfile = createAsyncThunk(
   'auth/getProfile',
   async (params:{(str: string): void}) => {
-    // const token = uuidv4()
-    // console.log(token);
     const token = Cookies.get('token')
     const response = await api.get(`/users?token=${token}`)
     return {response, params}
@@ -27,17 +25,17 @@ export const userAuth = createAsyncThunk(
     },
   )
 
-const proodSlice = createSlice({
+const authSlice = createSlice({
   name: 'prood',
   initialState: {
-    user: {},
+    user: {token: undefined, id: undefined, username: ''},
     auth: false,
     loading: false,
   },
   reducers: {
     logout(state: AuthState, action: PayloadAction) { 
       state.auth = false
-      state.user = {}
+      state.user = {token : undefined, id: undefined, username: ''}
       Cookies.remove('token');
     },
   },
@@ -45,12 +43,13 @@ const proodSlice = createSlice({
     builder.addCase(getProfile.pending, (state:AuthState, action:PayloadAction) => {
         state.loading = true
     });
-    builder.addCase(getProfile.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[{token: string}] | []}, params: (str: string)=> void}>) => {
+    builder.addCase(getProfile.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[{token: string, id:number, username: string}] | []}, params: (str: string)=> void}>) => {
         state.loading = false
         if(payload.response.data.length == 0){
             payload.params('/auth')
         }else {
             state.auth = true
+            state.user = payload.response.data[0]
         }
         console.log(payload);
         
@@ -80,12 +79,15 @@ const proodSlice = createSlice({
   },
 });
 
-export default proodSlice.reducer;
-export const { logout } =
-proodSlice.actions;
+export default authSlice.reducer;
+export const { logout } = authSlice.actions;
 
-interface AuthState{
+export interface AuthState{
 auth: boolean,
 loading: boolean,
-user: {}
+user: {
+  token: string | undefined,
+  id: number | undefined,
+  username: string
+}
 }
