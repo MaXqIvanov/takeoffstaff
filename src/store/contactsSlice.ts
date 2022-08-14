@@ -24,7 +24,7 @@ export const getUserContacts = createAsyncThunk(
 
 export const addUserContact = createAsyncThunk(
   'contacts/addUserContact',
-  async (params:{token: string | undefined, id: number | undefined}, {getState}) => {
+  async (params:{token: string | undefined, id: number | undefined, username: string}, {getState}) => {
     console.log(params);
     localStorage.setItem(`${Cookies.get('token')}/${params.id}`, JSON.stringify(params))
     return params
@@ -32,10 +32,22 @@ export const addUserContact = createAsyncThunk(
 )
 
 export const deleteUserContact = createAsyncThunk(
-  'contacts/addUserContact',
+  'contacts/deleteUserContact',
   async (params:{token: string | undefined, id: number | undefined}, {getState}) => {
     console.log(params);
     localStorage.removeItem(`${Cookies.get('token')}/${params.id}`)
+    return params
+  },
+)
+
+export const changeUserContact = createAsyncThunk(
+  'contacts/changeUserContact',
+  async (params:{id: number | undefined, username: string, name: string}, {getState}) => {
+    console.log(params);
+    localStorage.setItem(`${Cookies.get('token')}/${params.id}`, JSON.stringify({
+      ...params,
+      username: params.name
+    }))
     return params
   },
 )
@@ -46,9 +58,13 @@ const contactsSlice = createSlice({
     allContacts: [],
     userContacts: [],
     loadingContacts: false,
+
+    // modal window
+    isChange: false
   },
   reducers: {
-    getServices(state: ContactsState, action:PayloadAction) { 
+    setIsChange(state: ContactsState, action:PayloadAction) { 
+      state.isChange = !state.isChange
     },
   },
   extraReducers: (builder) => {
@@ -69,7 +85,7 @@ const contactsSlice = createSlice({
 
     builder.addCase(getUserContacts.pending, (state:ContactsState, action:PayloadAction) => {
     });
-    builder.addCase(getUserContacts.fulfilled, (state:ContactsState,  { payload }:PayloadAction<Array<{id :number}>>) => {
+    builder.addCase(getUserContacts.fulfilled, (state:ContactsState,  { payload }:PayloadAction<Array<{id :number, username: string}>>) => {
         console.log(payload);
         
         state.userContacts = payload
@@ -79,7 +95,7 @@ const contactsSlice = createSlice({
     
     builder.addCase(addUserContact.pending, (state:ContactsState, action:PayloadAction) => {
     });
-    builder.addCase(addUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<{id: number | null | undefined}>) => {
+    builder.addCase(addUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<{id: number | null | undefined, username: string| null | undefined}>) => {
       console.log(payload);
       
         const haveUser = state.userContacts.filter((elem: {id:number | null | undefined})=> elem.id == payload.id)
@@ -98,21 +114,30 @@ const contactsSlice = createSlice({
     builder.addCase(deleteUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<{id: number | null | undefined}>) => {
       console.log(payload);
       
-        const haveUser = state.userContacts.filter((elem: {id:number | null | undefined})=> elem.id == payload.id)
-        console.log(haveUser);
-        if(haveUser.length === 0){
-          state.userContacts = [...state.userContacts, payload]
-        }else {
-          alert("Данный пользователь уже есть в ваших контактах")
-        }
+      state.userContacts = state.userContacts.filter((elem: {id:number | null | undefined})=> elem.id !== payload.id)
+
     });
     builder.addCase(deleteUserContact.rejected, (state:ContactsState) => {
+    });
+
+    builder.addCase(changeUserContact.pending, (state:ContactsState, action:PayloadAction) => {
+    });
+    builder.addCase(changeUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<{id: number | null | undefined, name: string}>) => {
+      for(let i = 0; i < state.userContacts.length; i++){
+        if(state.userContacts[i].id === payload.id){
+          state.userContacts[i] = {...payload, 'username': payload.name}
+          state.isChange = false
+        }
+      }
+
+    });
+    builder.addCase(changeUserContact.rejected, (state:ContactsState) => {
     });
   },
 });
 
 export default contactsSlice.reducer;
-export const { } =
+export const { setIsChange } =
 contactsSlice.actions;
 
 interface ContactsState {
@@ -120,5 +145,7 @@ interface ContactsState {
     loadingContacts: boolean,
     userContacts: Array<{
       id: number | null | undefined
-    }>
+      username: string | null | undefined,
+    }>,
+    isChange: boolean
 }

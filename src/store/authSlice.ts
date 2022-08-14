@@ -28,14 +28,14 @@ export const userAuth = createAsyncThunk(
 const authSlice = createSlice({
   name: 'prood',
   initialState: {
-    user: {token: undefined, id: undefined},
+    user: {token: undefined, id: undefined, username: ''},
     auth: false,
     loading: false,
   },
   reducers: {
     logout(state: AuthState, action: PayloadAction) { 
       state.auth = false
-      state.user = {token : undefined, id: undefined}
+      state.user = {token : undefined, id: undefined, username: ''}
       Cookies.remove('token');
     },
   },
@@ -43,7 +43,7 @@ const authSlice = createSlice({
     builder.addCase(getProfile.pending, (state:AuthState, action:PayloadAction) => {
         state.loading = true
     });
-    builder.addCase(getProfile.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[{token: string, id:number}] | []}, params: (str: string)=> void}>) => {
+    builder.addCase(getProfile.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[{token: string, id:number, username: string}] | []}, params: (str: string)=> void}>) => {
         state.loading = false
         if(payload.response.data.length == 0){
             payload.params('/auth')
@@ -87,6 +87,7 @@ auth: boolean,
 loading: boolean,
 user: {
   token: string | undefined,
-  id: number | undefined
+  id: number | undefined,
+  username: string
 }
 }
