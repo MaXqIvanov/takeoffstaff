@@ -9,6 +9,7 @@ import { AuthPage } from './pages/AuthPage';
 import { RootState } from './store/store';
 import { getProfile } from './store/authSlice';
 import { useAppDispatch } from './hooks/redux';
+import { ContactsPage } from './pages/ContactsPage';
 
 function App() {
   const {loading} = useSelector((state:RootState)=> state.contacts)
@@ -23,11 +24,14 @@ function App() {
     <>
     {!loading ? 
       <>
-        {auth ? <Header></Header> : <></> }
+        {auth ?  <Header></Header> : <></> }
         <div className={'wrapper'}>
         <Routes>
            { auth ? 
-           <Route path={'/'} element={<AuthPage />} />
+           <>
+            <Route path={'/'} element={<ContactsPage />} />
+            <Route path={'/auth'} element={<AuthPage />} />
+           </>
            :
            <Route path={'/auth'} element={<AuthPage />} />
           } 
