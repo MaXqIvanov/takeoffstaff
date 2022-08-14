@@ -1,0 +1,15 @@
+.contacts{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.contacts_wrapper{
+    width: 90%;
+    height: 100%;
+    min-height: 90vh;
+    display: grid;
+    grid-template-columns: 45% 45%;
+    column-gap: 10%;
+}

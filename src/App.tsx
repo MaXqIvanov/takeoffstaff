@@ -12,8 +12,7 @@ import { useAppDispatch } from './hooks/redux';
 import { ContactsPage } from './pages/ContactsPage';
 
 function App() {
-  const {loading} = useSelector((state:RootState)=> state.contacts)
-  const { auth } = useSelector((state:RootState)=> state.auth)
+  const { auth, loading } = useSelector((state:RootState)=> state.auth)
   const nav = useNavigate()
   const dispatch = useAppDispatch()
   useEffect(() => {

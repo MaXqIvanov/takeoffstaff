@@ -1,31 +1,39 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import api from '../plugins/axios/api';
 
-export const getContactsAsync:any = createAsyncThunk(
+export const getAllContacts:any = createAsyncThunk(
   'contacts/getContactsAsync',
   async (params:{}) => {
+    const response = await api(`users`)
+    return response
   },
 )
 
 const proodSlice = createSlice({
   name: 'prood',
   initialState: {
-    contacts: [],
+    allContacts: [],
 
-    loading: false,
+    loadingContacts: false,
   },
   reducers: {
     getServices(state: ContactsState, action:PayloadAction) { 
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getContactsAsync.pending, (state:ContactsState, action:PayloadAction) => {
-        state.loading = true
+    builder.addCase(getAllContacts.pending, (state:ContactsState, action:PayloadAction) => {
+        state.loadingContacts = true
     });
-    builder.addCase(getContactsAsync.fulfilled, (state:ContactsState,  { payload }:PayloadAction) => {
-        state.loading = false
+    builder.addCase(getAllContacts.fulfilled, (state:ContactsState,  { payload }:PayloadAction<{
+      data: {}
+      }>) => {
+        state.loadingContacts = false
+        console.log(payload);
+        
+        state.allContacts = payload.data
     });
-    builder.addCase(getContactsAsync.rejected, (state:ContactsState) => {
-        state.loading = false
+    builder.addCase(getAllContacts.rejected, (state:ContactsState) => {
+        state.loadingContacts = false
     });
   },
 });
@@ -35,8 +43,6 @@ export const { } =
 proodSlice.actions;
 
 interface ContactsState {
-    contacts: {
-        id: number
-    }[],
-    loading: boolean,
+    allContacts: {},
+    loadingContacts: boolean,
 }
