@@ -14,7 +14,6 @@ export const getAllContacts = createAsyncThunk(
 export const getUserContacts = createAsyncThunk(
   'contacts/getUserContacts',
   async (params:{token: string | undefined}, {getState}) => {
-    console.log(params);
     let keys = Object.keys(localStorage);
     keys = keys.filter((elem:any) => elem.includes(`${Cookies.get('token')}`));
     const response = keys.map((elem:any) => JSON.parse(String(localStorage.getItem(elem))));
@@ -25,7 +24,6 @@ export const getUserContacts = createAsyncThunk(
 export const addUserContact = createAsyncThunk(
   'contacts/addUserContact',
   async (params:{token: string | undefined, id: number | undefined, username: string}, {getState}) => {
-    console.log(params);
     localStorage.setItem(`${Cookies.get('token')}/${params.id}`, JSON.stringify(params))
     return params
   },
@@ -34,7 +32,6 @@ export const addUserContact = createAsyncThunk(
 export const deleteUserContact = createAsyncThunk(
   'contacts/deleteUserContact',
   async (params:{token: string | undefined, id: number | undefined}, {getState}) => {
-    console.log(params);
     localStorage.removeItem(`${Cookies.get('token')}/${params.id}`)
     return params
   },
@@ -43,7 +40,6 @@ export const deleteUserContact = createAsyncThunk(
 export const changeUserContact = createAsyncThunk(
   'contacts/changeUserContact',
   async (params:{id: number | undefined, username: string, name: string}, {getState}) => {
-    console.log(params);
     localStorage.setItem(`${Cookies.get('token')}/${params.id}`, JSON.stringify({
       ...params,
       username: params.name
@@ -67,8 +63,6 @@ const contactsSlice = createSlice({
       state.isChange = !state.isChange
     },
     searchContacts(state: ContactsState, action:PayloadAction<string>) {
-      console.log(action.payload);
-      
       state.allContacts = state.allContacts.filter((elem:{username: string})=> elem.username.includes(action.payload))
     }
   }, 
@@ -80,8 +74,6 @@ const contactsSlice = createSlice({
       data: []
       }>) => {
         state.loadingContacts = false
-        console.log(payload);
-        
         state.allContacts = payload.data
     });
     builder.addCase(getAllContacts.rejected, (state:ContactsState) => {
@@ -91,8 +83,6 @@ const contactsSlice = createSlice({
     builder.addCase(getUserContacts.pending, (state:ContactsState, action:PayloadAction) => {
     });
     builder.addCase(getUserContacts.fulfilled, (state:ContactsState,  { payload }:PayloadAction<Array<{id :number, username: string}>>) => {
-        console.log(payload);
-        
         state.userContacts = payload
     });
     builder.addCase(getUserContacts.rejected, (state:ContactsState) => {
@@ -101,10 +91,8 @@ const contactsSlice = createSlice({
     builder.addCase(addUserContact.pending, (state:ContactsState, action:PayloadAction) => {
     });
     builder.addCase(addUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<{id: number | null | undefined, username: string| null | undefined}>) => {
-      console.log(payload);
       
         const haveUser = state.userContacts.filter((elem: {id:number | null | undefined})=> elem.id == payload.id)
-        console.log(haveUser);
         if(haveUser.length === 0){
           state.userContacts = [...state.userContacts, payload]
         }else {
@@ -117,8 +105,6 @@ const contactsSlice = createSlice({
     builder.addCase(deleteUserContact.pending, (state:ContactsState, action:PayloadAction) => {
     });
     builder.addCase(deleteUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<{id: number | null | undefined}>) => {
-      console.log(payload);
-      
       state.userContacts = state.userContacts.filter((elem: {id:number | null | undefined})=> elem.id !== payload.id)
 
     });

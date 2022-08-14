@@ -19,7 +19,6 @@ export const getProfile = createAsyncThunk(
 export const userAuth = createAsyncThunk(
     'auth/userRegistration',
     async (params:{email: string, password: string, nav: {(str: string): void}}) => {
-      console.log(params);
       const response = await api(`users?email=${params.email}&password=${params.password}`)
       return {response, params}
     },
@@ -45,13 +44,12 @@ const authSlice = createSlice({
     });
     builder.addCase(getProfile.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[{token: string, id:number, username: string}] | []}, params: (str: string)=> void}>) => {
         state.loading = false
-        if(payload.response.data.length == 0){
+        if(payload.response.data?.length == 0){
             payload.params('/auth')
         }else {
             state.auth = true
             state.user = payload.response.data[0]
         }
-        console.log(payload);
         
     });
     builder.addCase(getProfile.rejected, (state:AuthState) => {
@@ -62,7 +60,6 @@ const authSlice = createSlice({
     });
     builder.addCase(userAuth.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[{token: string}] | []},
         params: {email: string, password: string, nav: (str: string)=> void}}>) => {
-        console.log(payload.response);
         if(payload.response.data.length == 0){
             alert('Введены не верные данные')
         }else {
