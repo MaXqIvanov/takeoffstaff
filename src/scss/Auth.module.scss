@@ -1,12 +1,13 @@
 .auth{
     height: 100%;
     width: 100%;
-    min-height: 100vh;
+    min-height: 90vh;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 .auth_wrapper{
+    margin-top: 10vh;
     width: 300px;
     height: 280px;
     background: rgb(0, 76, 88);

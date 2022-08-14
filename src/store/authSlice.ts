@@ -1,8 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import api from '../plugins/axios/api';
-import { v4 as uuidv4 } from 'uuid';
 import Cookies from 'js-cookie';
-import db from '../db.json';
+import { HeadersDefaults } from 'axios';
+
+interface CommonHeaderProperties extends HeadersDefaults {
+  Authorization: string;
+}
 
 export const getProfile = createAsyncThunk(
   'auth/getProfile',
@@ -10,16 +13,16 @@ export const getProfile = createAsyncThunk(
     // const token = uuidv4()
     // console.log(token);
     const token = Cookies.get('token')
-    console.log(token);
-    const response = await api.get(`/users/${token}`)
+    const response = await api.get(`/users?token=${token}`)
     return {response, params}
   },
 )
 
-export const userRegistration = createAsyncThunk(
+export const userAuth = createAsyncThunk(
     'auth/userRegistration',
-    async (params:{email: string, name: string, password: string}) => {
-      const response = await api(`users?email=${params.email}`)
+    async (params:{email: string, password: string, nav: {(str: string): void}}) => {
+      console.log(params);
+      const response = await api(`users?email=${params.email}&password=${params.password}`)
       return {response, params}
     },
   )
@@ -27,20 +30,24 @@ export const userRegistration = createAsyncThunk(
 const proodSlice = createSlice({
   name: 'prood',
   initialState: {
-    auth: false as boolean,
-    loading: false as boolean,
+    user: {},
+    auth: false,
+    loading: false,
   },
   reducers: {
-    changeAuth(state: AuthState, action: PayloadAction) { 
+    logout(state: AuthState, action: PayloadAction) { 
+      state.auth = false
+      state.user = {}
+      Cookies.remove('token');
     },
   },
   extraReducers: (builder) => {
     builder.addCase(getProfile.pending, (state:AuthState, action:PayloadAction) => {
         state.loading = true
     });
-    builder.addCase(getProfile.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{status:number}, params: (str: string)=> void}>) => {
+    builder.addCase(getProfile.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[{token: string}] | []}, params: (str: string)=> void}>) => {
         state.loading = false
-        if(payload.response.status === 404){
+        if(payload.response.data.length == 0){
             payload.params('/auth')
         }else {
             state.auth = true
@@ -52,29 +59,33 @@ const proodSlice = createSlice({
         state.loading = false
     });
 
-    builder.addCase(userRegistration.pending, (state:AuthState, action:PayloadAction) => {
+    builder.addCase(userAuth.pending, (state:AuthState, action:PayloadAction) => {
     });
-    builder.addCase(userRegistration.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{status:number},
-        params: {email: string, name: string, password: string}}>) => {
+    builder.addCase(userAuth.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[{token: string}] | []},
+        params: {email: string, password: string, nav: (str: string)=> void}}>) => {
         console.log(payload.response);
-        if(payload.response.status === 404){
-            alert('Такая почта уже зарегистрирована в системе')
+        if(payload.response.data.length == 0){
+            alert('Введены не верные данные')
         }else {
-            const token = uuidv4()
-            console.log(token);
-            const response = db.users.push({id: token, email: payload.params.email, name: payload.params.name, password: payload.params.password})
+          Cookies.set('token', `${payload.response.data[0].token}`, { path: '/', expires: 60 })
+          api.defaults.headers = {
+            Authorization: `Bearer ${payload.response.data[0].token}`
+          } as CommonHeaderProperties;
+          state.auth = true
+          payload.params.nav('/')
         }
     });
-    builder.addCase(userRegistration.rejected, (state:AuthState) => {
+    builder.addCase(userAuth.rejected, (state:AuthState) => {
     });
   },
 });
 
 export default proodSlice.reducer;
-export const { changeAuth } =
+export const { logout } =
 proodSlice.actions;
 
 interface AuthState{
 auth: boolean,
-loading: boolean
+loading: boolean,
+user: {}
 }
