@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap');
+.loading{
+    height: 50%;
+    width: 50%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+body{
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+}
+
+*::-webkit-scrollbar {
+    width: 6px; /* ширина scrollbar */
+  }
+  *::-webkit-scrollbar-track {
+    background: rgb(255, 255, 255); /* цвет дорожки */
+    border-radius: 25px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: #84d1fd; /* цвет плашки */
+    border-radius: 20px; /* закругления плашки */
+    border: 3px solid #84d1fd; /* padding вокруг плашки */
+  }

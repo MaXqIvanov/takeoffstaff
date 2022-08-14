@@ -16,8 +16,8 @@ export const MyContacts = () => {
     }, [])
     
   return (
-    <div>
-        <div>Ваши контакты</div>
+    <div className={styles.user_contacts_wrapper}>
+        <div className={styles.title}>Ваши контакты</div>
         {userContacts && userContacts.map((elem:{id: number, username: string, token: string})=>
             <div className={styles.user_contacts} key={elem.id}>
                     <div>{elem.username}</div>
