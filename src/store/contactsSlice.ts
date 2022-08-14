@@ -66,13 +66,18 @@ const contactsSlice = createSlice({
     setIsChange(state: ContactsState, action:PayloadAction) { 
       state.isChange = !state.isChange
     },
-  },
+    searchContacts(state: ContactsState, action:PayloadAction<string>) {
+      console.log(action.payload);
+      
+      state.allContacts = state.allContacts.filter((elem:{username: string})=> elem.username.includes(action.payload))
+    }
+  }, 
   extraReducers: (builder) => {
     builder.addCase(getAllContacts.pending, (state:ContactsState, action:PayloadAction) => {
         state.loadingContacts = true
     });
     builder.addCase(getAllContacts.fulfilled, (state:ContactsState,  { payload }:PayloadAction<{
-      data: {}
+      data: []
       }>) => {
         state.loadingContacts = false
         console.log(payload);
@@ -137,11 +142,13 @@ const contactsSlice = createSlice({
 });
 
 export default contactsSlice.reducer;
-export const { setIsChange } =
+export const { setIsChange, searchContacts } =
 contactsSlice.actions;
 
 interface ContactsState {
-    allContacts: {},
+    allContacts: Array<{
+      username: string
+    }>,
     loadingContacts: boolean,
     userContacts: Array<{
       id: number | null | undefined
