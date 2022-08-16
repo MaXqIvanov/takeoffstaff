@@ -32,7 +32,7 @@ export const AuthComponent = () => {
             <label htmlFor="floatingPassword">Password</label>
             </div>
             {
-              !auth ? <input onClick={()=> onSubmit()} disabled={email.length == 0 && password.length == 0} className={`${styles.btn_auth} btn btn-lg btn-primary mt-4`} type="button" value={'Войти'}/>
+              !auth ? <input onClick={()=> onSubmit()} disabled={email.length == 0 || password.length == 0} className={`${styles.btn_auth} btn btn-lg btn-primary mt-4`} type="button" value={'Войти'}/>
               :
               <input onClick={()=> dispatch(logout())} className={`${styles.btn_auth} btn btn-lg btn-primary mt-4`} type="button" value={'Выйти'}/>
             }
