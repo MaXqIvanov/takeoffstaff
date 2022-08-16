@@ -1,4 +1,4 @@
-import { contacts } from './../ts/otherTypes';
+import { contacts, ContactsState } from './../ts/otherTypes';
 import Cookies from "js-cookie";
 import { setupStore } from './store';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -107,7 +107,7 @@ const contactsSlice = createSlice({
     builder.addCase(deleteUserContact.pending, (state:ContactsState, action:PayloadAction) => {
     });
     builder.addCase(deleteUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<contacts>) => {
-      state.userContacts = state.userContacts.filter((elem: {id:number | null | undefined})=> elem.id !== payload.id)
+      state.userContacts = state.userContacts.filter((elem: {id:number | null})=> elem.id !== payload.id)
 
     });
     builder.addCase(deleteUserContact.rejected, (state:ContactsState) => {
@@ -132,11 +132,3 @@ const contactsSlice = createSlice({
 export default contactsSlice.reducer;
 export const { setIsChange, searchingContacts } =
 contactsSlice.actions;
-
-interface ContactsState {
-    allContacts: Array<contacts>,
-    searchContacts: Array<{}>,
-    loadingContacts: boolean,
-    userContacts: Array<contacts>,
-    isChange: boolean
-}

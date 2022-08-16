@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import api from '../plugins/axios/api';
 import Cookies from 'js-cookie';
 import { HeadersDefaults } from 'axios';
-import { contacts } from '../ts/otherTypes';
+import { AuthState, contacts } from '../ts/otherTypes';
 
 interface CommonHeaderProperties extends HeadersDefaults {
   Authorization: string;
@@ -10,7 +10,7 @@ interface CommonHeaderProperties extends HeadersDefaults {
 
 export const getProfile = createAsyncThunk(
   'auth/getProfile',
-  async (params:{(str: string): void}) => {
+  async (params: CallableFunction) => {
     const token = Cookies.get('token')
     const response = await api.get(`/users?token=${token}`)
     return {response, params}
@@ -19,7 +19,7 @@ export const getProfile = createAsyncThunk(
 
 export const userAuth = createAsyncThunk(
     'auth/userRegistration',
-    async (params:{email: string, password: string, nav: {(str: string): void}}) => {
+    async (params:{email: string, password: string, nav: CallableFunction}) => {
       const response = await api(`users?email=${params.email}&password=${params.password}`)
       return {response, params}
     },
@@ -81,9 +81,3 @@ const authSlice = createSlice({
 
 export default authSlice.reducer;
 export const { logout } = authSlice.actions;
-
-export interface AuthState{
-auth: boolean,
-loading: boolean,
-user: contacts
-}
