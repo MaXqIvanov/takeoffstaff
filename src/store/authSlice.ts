@@ -60,8 +60,10 @@ const authSlice = createSlice({
     });
     builder.addCase(userAuth.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[{token: string}] | []},
         params: {email: string, password: string, nav: (str: string)=> void}}>) => {
+          console.log(state.auth);
+        
         if(payload.response.data.length == 0){
-            alert('Введены не верные данные')
+          alert('Введены не верные данные')
         }else {
           Cookies.set('token', `${payload.response.data[0].token}`, { path: '/', expires: 60 })
           api.defaults.headers = {

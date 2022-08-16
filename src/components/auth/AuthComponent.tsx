@@ -13,18 +13,6 @@ export const AuthComponent = () => {
   const { auth } = useSelector((state:RootState)=> state.auth)
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const { 
-    register,
-    formState: {
-    errors,
-    isValid
-    },
-    handleSubmit,
-    reset,
-    
-  } = useForm({
-    mode: "onBlur"
-  });
 
   const onSubmit = () =>{
     dispatch(userAuth({nav, email, password}))
@@ -35,7 +23,6 @@ export const AuthComponent = () => {
   return (
     <div className={styles.auth}>
         <div className={styles.auth_wrapper}>
-        <form onSubmit={handleSubmit(onSubmit)}>
             <div className="form-floating mt-4">
             <input onChange={(e)=> setEmail(e.target.value)} type="email" className="form-control" id="floatingInput" placeholder="name@example.com" />
             <label htmlFor="floatingInput">Email address</label>
@@ -45,11 +32,10 @@ export const AuthComponent = () => {
             <label htmlFor="floatingPassword">Password</label>
             </div>
             {
-              !auth ? <input disabled={!isValid} className="w-100 btn btn-lg btn-primary mt-4" type="submit" value={'Войти'}/>
+              !auth ? <input onClick={()=> onSubmit()} disabled={email.length == 0 || password.length == 0} className={`${styles.btn_auth} btn btn-lg btn-primary mt-4`} type="button" value={'Войти'}/>
               :
-              <input onClick={()=> dispatch(logout())} className="w-100 btn btn-lg btn-primary mt-4" type="button" value={'Выйти'}/>
+              <input onClick={()=> dispatch(logout())} className={`${styles.btn_auth} btn btn-lg btn-primary mt-4`} type="button" value={'Выйти'}/>
             }
-        </form>
         </div>
     </div>
   )
