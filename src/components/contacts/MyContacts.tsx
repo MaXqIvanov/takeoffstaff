@@ -9,7 +9,7 @@ import { contacts } from '../../ts/otherTypes'
 export const MyContacts = () => {
     const {user} = useSelector((state:RootState)=> state.auth)
     const {userContacts, isChange} = useSelector((state:RootState)=> state.contacts)
-    const [name, setName] = useState<string>('')
+    const [name, setName] = useState<string | undefined>('')
     const [currentUser, setCurrentUser] = useState<contacts>({id: null, username: '', password: '', token: '', email: ''})
     const dispatch = useAppDispatch()
     useEffect(() => {
