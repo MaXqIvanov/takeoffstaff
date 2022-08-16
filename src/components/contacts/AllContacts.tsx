@@ -9,12 +9,11 @@ export const AllContacts = () => {
     const dispatch = useAppDispatch()
     const [search, setSearch] = useState<string>('')
     useEffect(() => {
-        if(search.length == 0){
-            dispatch(getAllContacts())
-          }
-        else{
-            dispatch(searchingContacts(search))
-        }
+      dispatch(getAllContacts())
+    }, [])
+    
+    useEffect(() => {
+      dispatch(searchingContacts(search))
     }, [search])
     const {allContacts, searchContacts} = useSelector((state:RootState)=> state.contacts)
     
