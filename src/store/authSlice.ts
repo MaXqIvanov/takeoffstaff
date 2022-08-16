@@ -26,7 +26,7 @@ export const userAuth = createAsyncThunk(
   )
 
 const authSlice = createSlice({
-  name: 'prood',
+  name: 'auth',
   initialState: {
     user: {token: '', id: null, username: '', email: '', password: ''},
     auth: false,
@@ -59,7 +59,7 @@ const authSlice = createSlice({
 
     builder.addCase(userAuth.pending, (state:AuthState, action:PayloadAction) => {
     });
-    builder.addCase(userAuth.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[{token: string}] | []},
+    builder.addCase(userAuth.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[contacts] | []},
         params: {email: string, password: string, nav: CallableFunction}}>) => {
           console.log(state.auth);
         
