@@ -1,3 +1,4 @@
+import { contacts } from './../ts/otherTypes';
 import Cookies from "js-cookie";
 import { setupStore } from './store';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -13,7 +14,7 @@ export const getAllContacts = createAsyncThunk(
 
 export const getUserContacts = createAsyncThunk(
   'contacts/getUserContacts',
-  async (params:{token: string | undefined}, {getState}) => {
+  async (params:contacts, {getState}) => {
     let keys = Object.keys(localStorage);
     keys = keys.filter((elem:any) => elem.includes(`${Cookies.get('token')}`));
     const response = keys.map((elem:any) => JSON.parse(String(localStorage.getItem(elem))));
@@ -23,7 +24,7 @@ export const getUserContacts = createAsyncThunk(
 
 export const addUserContact = createAsyncThunk(
   'contacts/addUserContact',
-  async (params:{token: string | undefined, id: number | undefined, username: string}, {getState}) => {
+  async (params:contacts, {getState}) => {
     localStorage.setItem(`${Cookies.get('token')}/${params.id}`, JSON.stringify(params))
     return params
   },
@@ -31,7 +32,7 @@ export const addUserContact = createAsyncThunk(
 
 export const deleteUserContact = createAsyncThunk(
   'contacts/deleteUserContact',
-  async (params:{token: string | undefined, id: number | undefined}, {getState}) => {
+  async (params:contacts, {getState}) => {
     localStorage.removeItem(`${Cookies.get('token')}/${params.id}`)
     return params
   },
@@ -39,7 +40,7 @@ export const deleteUserContact = createAsyncThunk(
 
 export const changeUserContact = createAsyncThunk(
   'contacts/changeUserContact',
-  async (params:{id: number | undefined, username: string, name: string}, {getState}) => {
+  async (params:contacts, {getState}) => {
     localStorage.setItem(`${Cookies.get('token')}/${params.id}`, JSON.stringify({
       ...params,
       username: params.name
@@ -83,7 +84,7 @@ const contactsSlice = createSlice({
 
     builder.addCase(getUserContacts.pending, (state:ContactsState, action:PayloadAction) => {
     });
-    builder.addCase(getUserContacts.fulfilled, (state:ContactsState,  { payload }:PayloadAction<Array<{id :number, username: string}>>) => {
+    builder.addCase(getUserContacts.fulfilled, (state:ContactsState,  { payload }:PayloadAction<Array<contacts>>) => {
         state.userContacts = payload
     });
     builder.addCase(getUserContacts.rejected, (state:ContactsState) => {
@@ -91,7 +92,7 @@ const contactsSlice = createSlice({
     
     builder.addCase(addUserContact.pending, (state:ContactsState, action:PayloadAction) => {
     });
-    builder.addCase(addUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<{id: number | null | undefined, username: string| null | undefined}>) => {
+    builder.addCase(addUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<contacts>) => {
       
         const haveUser = state.userContacts.filter((elem: {id:number | null | undefined})=> elem.id == payload.id)
         if(haveUser.length === 0){
@@ -105,7 +106,7 @@ const contactsSlice = createSlice({
 
     builder.addCase(deleteUserContact.pending, (state:ContactsState, action:PayloadAction) => {
     });
-    builder.addCase(deleteUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<{id: number | null | undefined}>) => {
+    builder.addCase(deleteUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<contacts>) => {
       state.userContacts = state.userContacts.filter((elem: {id:number | null | undefined})=> elem.id !== payload.id)
 
     });
@@ -114,7 +115,7 @@ const contactsSlice = createSlice({
 
     builder.addCase(changeUserContact.pending, (state:ContactsState, action:PayloadAction) => {
     });
-    builder.addCase(changeUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<{id: number | null | undefined, name: string}>) => {
+    builder.addCase(changeUserContact.fulfilled, (state:ContactsState,  { payload }:PayloadAction<contacts>) => {
       for(let i = 0; i < state.userContacts.length; i++){
         if(state.userContacts[i].id === payload.id){
           state.userContacts[i] = {...payload, 'username': payload.name}

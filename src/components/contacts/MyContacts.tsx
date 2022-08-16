@@ -4,12 +4,13 @@ import { useAppDispatch } from '../../hooks/redux'
 import styles from '../../scss/Contacts.module.scss'
 import { changeUserContact, deleteUserContact, getUserContacts, setIsChange } from '../../store/contactsSlice'
 import { RootState } from '../../store/store'
+import { contacts } from '../../ts/otherTypes'
 
 export const MyContacts = () => {
     const {user} = useSelector((state:RootState)=> state.auth)
     const {userContacts, isChange} = useSelector((state:RootState)=> state.contacts)
     const [name, setName] = useState<string>('')
-    const [currentUser, setCurrentUser] = useState<{id: number | undefined, username: string}>({id: undefined, username: ''})
+    const [currentUser, setCurrentUser] = useState<contacts>({id: null, username: '', password: '', token: '', email: ''})
     const dispatch = useAppDispatch()
     useEffect(() => {
       dispatch(getUserContacts(user))
@@ -18,7 +19,7 @@ export const MyContacts = () => {
   return (
     <div className={styles.user_contacts_wrapper}>
         <div className={styles.title}>Ваши контакты</div>
-        {userContacts && userContacts.map((elem:{id: number, username: string, token: string})=>
+        {userContacts && userContacts.map((elem:contacts)=>
             <div className={styles.user_contacts} key={elem.id}>
                     <div>{elem.username}</div>
                     <div className={styles.group_btn}>

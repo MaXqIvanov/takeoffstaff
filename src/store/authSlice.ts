@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import api from '../plugins/axios/api';
 import Cookies from 'js-cookie';
 import { HeadersDefaults } from 'axios';
+import { contacts } from '../ts/otherTypes';
 
 interface CommonHeaderProperties extends HeadersDefaults {
   Authorization: string;
@@ -27,14 +28,14 @@ export const userAuth = createAsyncThunk(
 const authSlice = createSlice({
   name: 'prood',
   initialState: {
-    user: {token: undefined, id: undefined, username: ''},
+    user: {token: '', id: null, username: '', email: '', password: ''},
     auth: false,
     loading: false,
   },
   reducers: {
     logout(state: AuthState, action: PayloadAction) { 
       state.auth = false
-      state.user = {token : undefined, id: undefined, username: ''}
+      state.user = {token : '', id: null, username: '', password: '', email: ''}
       Cookies.remove('token');
     },
   },
@@ -42,7 +43,7 @@ const authSlice = createSlice({
     builder.addCase(getProfile.pending, (state:AuthState, action:PayloadAction) => {
         state.loading = true
     });
-    builder.addCase(getProfile.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[{token: string, id:number, username: string}] | []}, params: (str: string)=> void}>) => {
+    builder.addCase(getProfile.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[contacts] | []}, params: CallableFunction}>) => {
         state.loading = false
         if(payload.response.data?.length == 0){
             payload.params('/auth')
@@ -59,7 +60,7 @@ const authSlice = createSlice({
     builder.addCase(userAuth.pending, (state:AuthState, action:PayloadAction) => {
     });
     builder.addCase(userAuth.fulfilled, (state:AuthState,  { payload }:PayloadAction<{response:{data:[{token: string}] | []},
-        params: {email: string, password: string, nav: (str: string)=> void}}>) => {
+        params: {email: string, password: string, nav: CallableFunction}}>) => {
           console.log(state.auth);
         
         if(payload.response.data.length == 0){
@@ -84,9 +85,5 @@ export const { logout } = authSlice.actions;
 export interface AuthState{
 auth: boolean,
 loading: boolean,
-user: {
-  token: string | undefined,
-  id: number | undefined,
-  username: string
-}
+user: contacts
 }
