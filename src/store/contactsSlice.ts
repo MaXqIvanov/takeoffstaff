@@ -54,7 +54,7 @@ const contactsSlice = createSlice({
     allContacts: [],
     userContacts: [],
     loadingContacts: false,
-
+    searchContacts: [],
     // modal window
     isChange: false
   },
@@ -62,8 +62,8 @@ const contactsSlice = createSlice({
     setIsChange(state: ContactsState, action:PayloadAction) { 
       state.isChange = !state.isChange
     },
-    searchContacts(state: ContactsState, action:PayloadAction<string>) {
-      state.allContacts = state.allContacts.filter((elem:{username: string})=> elem.username.includes(action.payload))
+    searchingContacts(state: ContactsState, action:PayloadAction<string>) {
+      state.searchContacts = state.allContacts.filter((elem:{username: string})=> elem.username.includes(action.payload))
     }
   }, 
   extraReducers: (builder) => {
@@ -75,6 +75,7 @@ const contactsSlice = createSlice({
       }>) => {
         state.loadingContacts = false
         state.allContacts = payload.data
+        state.searchContacts = payload.data
     });
     builder.addCase(getAllContacts.rejected, (state:ContactsState) => {
         state.loadingContacts = false
@@ -128,13 +129,14 @@ const contactsSlice = createSlice({
 });
 
 export default contactsSlice.reducer;
-export const { setIsChange, searchContacts } =
+export const { setIsChange, searchingContacts } =
 contactsSlice.actions;
 
 interface ContactsState {
     allContacts: Array<{
       username: string
     }>,
+    searchContacts: Array<{}>,
     loadingContacts: boolean,
     userContacts: Array<{
       id: number | null | undefined
